@@ -88,7 +88,8 @@ class ProjectController extends Controller
     public function edit(Project $project)
     {
         $categories = Category::all();
-        return view('admin.projects.edit', compact('project', 'categories'));
+        $technologies = Technology::all();
+        return view('admin.projects.edit', compact('project', 'categories', 'technologies'));
     }
 
     /**
@@ -117,6 +118,13 @@ class ProjectController extends Controller
         $form_data['slug'] = Project::generateSlug($form_data['name']);
     
         $project->update($form_data);
+
+        if ($request->has('technologies')) {
+            $project->technologies()->sync($request->technologies);
+        }
+        else{
+            $project->technologies()->sync([]);
+        }
     
         return redirect()->route('admin.projects.index');
     }
@@ -129,6 +137,11 @@ class ProjectController extends Controller
      */
     public function destroy(Project $project)
     {
+        if (Str::startsWith($project->project_image, 'https') === false) { 
+            Storage::disk('public')->delete($project->project_image);
+        }
+        $project->technologies()->sync([]);
+
         $project->delete();
 
         return redirect()->route('admin.projects.index')->with('success', 'Progetto eliminato con successo');

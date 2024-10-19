@@ -57,6 +57,17 @@
                             </select>
                         </div>
                         <div class="col-12">
+                            <label for="" class="control-lable">Cambia la tecnologia</label>
+                            <div>
+                                @foreach($technologies as $technology)
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="checkbox" name="technologies[]" value="{{ $technology->id }}" @checked($project->technologies->contains($technology->id) ? 'checked' : '')>
+                                        <label class="form-check-label">{{ $technology->name }}</label>
+                                    </div>
+                                @endforeach
+                            </div>
+                        </div>
+                        <div class="col-12">
                             <label for="" class="control-label">Descrizione Progetto</label>
                             <textarea name="summary" id="" cols="30" rows="10" class="form-control form-control-sm">{{ old('summary', $project->summary) }}</textarea>
                         </div>
